@@ -3,6 +3,9 @@
 // world news of Monday 23 November 2026: the Trump-Putin-Xi summit in Shenzhen,
 // the COP31 talks collapse, the AI market whiplash, the war in Ukraine at home
 // and at sea, the M6.5 Vanuatu earthquake and the GTA VI sales record.
+// Second edition of the artwork: a bolder front page — an oversized masthead,
+// one dominant hero panel for the summit, and far larger headline type in every
+// panel, so the whole page stays legible at thumbnail size.
 // The gate takes a whole PNG or JPEG of at most 1 MiB and 1024 by 1024 pixels,
 // so before copying, this program validates the image's own header and size and
 // refuses to emit an out-of-spec file instead of silently altering it.
@@ -60,6 +63,11 @@ if (size > MAX_BYTES) {
 const { width, height } = dimensions(readFileSync(source));
 if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
   fail(`entry.png is ${width}x${height}, over the 1024x1024 limit`);
+}
+// The artwork is composed as a square front page; a non-square file means the
+// wrong asset was bundled, so refuse it rather than emit a cropped surprise.
+if (width !== height) {
+  fail(`entry.png is ${width}x${height}, not the square front page expected`);
 }
 
 const dest = join(process.env.MAKEFUN_OUTPUT_DIR ?? '/output', 'entry.png');
